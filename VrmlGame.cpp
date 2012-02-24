@@ -11,7 +11,6 @@
 #include "readrgb.h"
 //#include <stdio.h>
 //#include <stdlib.h>
-//#include <string.h>
 
 
 namespace PTAMM{
@@ -41,12 +40,13 @@ static bool CheckFramebufferStatus();
 		//texture = new GLuint;
 		glGenTextures(20, texture);
 		//glBindTexture(GL_TEXTURE_2D, texture);
-		std::cout<<"1;"<<std::endl;
+		
 
 		phongShadow.SetShaderFile("shaders/phong.vs","shaders/phong.fs");
 		phongShadow.UseShader(false);
 		GeneratrShadowFBO();
 		InitMedMaskTexture();
+		std::cout<<"VrmlGame generate method......"<<std::endl;
 	}
 
 	void VrmlGame::InitMedMaskTexture(){
@@ -56,9 +56,10 @@ static bool CheckFramebufferStatus();
 		texMedMaskImage = auxDIBImageLoad("MEDMASK.bmp");
 		if (texMedMaskImage == NULL)
 		{
-			std::cout << "no texture file,please convert rgb file to bmp file"<< std::cout;
+			std::cout << "no texture file,please convert rgb file to bmp file"<< std::endl;
 			return;
 		}
+
 		glTexImage2D(GL_TEXTURE_2D, 0,
 			3, texMedMaskImage->sizeX, texMedMaskImage->sizeY, 0,
 			GL_RGB, GL_UNSIGNED_BYTE, texMedMaskImage->data);
@@ -72,17 +73,21 @@ static bool CheckFramebufferStatus();
 			}
 			free(texMedMaskImage);
 		}
+		std::cout << "load MEDMASK.bmp" << std::endl;
 	}
 
 	void VrmlGame::DrawMediatorAndObject()
 	{
 		
 		//mediator
-		//glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
 
 		//glutSolidCube(1);
 
-		glColor4f(0.7f, 0.7f, 0.7f, 0.0f);
+		//glColor4f(0.7f, 0.7f, 0.7f, 0.0f);
+		glEnable(GL_TEXTURE_2D);
+		//为什么加了这句话就没有阴影了  --2.23
+		//glBindTexture(GL_TEXTURE_2D, medMashTextureId);
 		//back face
 		glBegin(GL_POLYGON);
 		glVertex3f(1.0f, 0.0f, 1.0f);
@@ -140,6 +145,8 @@ static bool CheckFramebufferStatus();
 		//glVertex3f(-0.3f, 0.0f, -1.0f);
 		//glVertex3f(-0.3f, 0.0f, -0.3f);
 		//glEnd();
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 		//Virtual object
 		std::vector<openvrml::node_ptr> mfn;
 		mfn = b.root_nodes();
@@ -361,6 +368,7 @@ static bool CheckFramebufferStatus();
 
 		// switch back to window-system-provided framebuffer
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		std::cout<< "Generate Shadow FBO" << std::endl;
 	}
 
 
@@ -399,6 +407,20 @@ static bool CheckFramebufferStatus();
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+
+	//float VrmlGame::readShadowvariable(std::string &filepath)
+	//{
+	//	std::ifstream variableFile;
+	//	double shadowVariable;
+	//	variableFile.open(filepath.c_str());
+	//	if (!variableFile)
+	//	{
+	//		cout << "can't open the variable file" <<endl;
+	//	}
+	//	variableFile>>shadowVariable;
+	//	return shadowVariable;
+	//}
+
 	void VrmlGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera)
 	{
 		if(!mbInitialised) {
@@ -407,6 +429,18 @@ static bool CheckFramebufferStatus();
 		GetMatrixMP(map);
 		GLfloat temp_trans[] = {mP(0,0), mP(0,1), mP(0,2), mP(0,3), mP(1,0), mP(1,1), mP(1,2), mP(1,3), mP(2,0), mP(2,1), mP(2,2), mP(2,3), mP(3,0), mP(3,1), mP(3,2), mP(3,3)};
 		
+		//add at 2.23
+		//读取阴影明暗变量
+		std::string filename = "variable.txt";
+		std::ifstream variableFile;
+		float shadowvariable;
+		variableFile.open(filename.c_str());
+		if (!variableFile)
+		{
+			cout << "can't open the variable file" <<endl;
+		}
+		variableFile>>shadowvariable;
+
  		//shadow
  		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboShadowId);
  		CheckFramebufferStatus();
@@ -451,7 +485,6 @@ static bool CheckFramebufferStatus();
 		glLoadIdentity();
 		glMultMatrix(mCamera.MakeUFBLinearFrustumMatrix(0.005, 100));
 		glMultMatrix(se3CfromW);
-		//gluPerspective(45,RENDER_WIDTH/RENDER_HEIGHT,3,40000);
 		
 	    //opengl staff
 		glDisable(GL_BLEND);
@@ -463,13 +496,14 @@ static bool CheckFramebufferStatus();
 		glLoadIdentity();
  		glMultMatrix(SE3<>());
  		glMultMatrixf(temp_trans);
-		//gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -100.0, 0.0, 1.0, 0.0);//默认 
-		//gluLookAt(0.1, 4.0, 0.0, 0.0, -100.0, 0.0, 0.0, 1.0, 0.0);
+
+
 		
 		phongShadow.UseShader(true);
 		glEnable(GL_TEXTURE_2D);
 		phongShadow.SetUniVar("xPixelOffset", 1.0f/ (640.0f* 2));
 		phongShadow.SetUniVar("yPixelOffset", 1.0f/ (480.0f* 2));
+		phongShadow.SetUniVar("shadowVariable", shadowvariable);
 		phongShadow.SetSampler("ShadowMap",7);
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, depthTextureId);
@@ -481,24 +515,25 @@ static bool CheckFramebufferStatus();
 		phongShadow.UseShader(false);
 
 		////test shadow mapping
-		//glUseProgramObjectARB(0);
-		//glMatrixMode(GL_PROJECTION);
-		//glLoadIdentity();
-		//glOrtho(-RENDER_WIDTH/2,RENDER_WIDTH/2,-RENDER_HEIGHT/2,RENDER_HEIGHT/2,1,20);
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadIdentity();
-		//glColor4f(1,1,1,1);
-		//glActiveTextureARB(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D,depthTextureId);
-		//glEnable(GL_TEXTURE_2D);
-		//glTranslated(0,0,-1);
-		//glBegin(GL_QUADS);
-		//glTexCoord2d(0,0);glVertex3f(0,0,0);
-		//glTexCoord2d(1,0);glVertex3f(RENDER_WIDTH/2,0,0);
-		//glTexCoord2d(1,1);glVertex3f(RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
-		//glTexCoord2d(0,1);glVertex3f(0,RENDER_HEIGHT/2,0);
-		//glEnd();
-		//glDisable(GL_TEXTURE_2D);
+		//貌似这段程序没法画出深度图，不过印象中之前可以的啊  ---2.23
+		/*glUseProgramObjectARB(0);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-RENDER_WIDTH/2,RENDER_WIDTH/2,-RENDER_HEIGHT/2,RENDER_HEIGHT/2,1,20);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glColor4f(1,1,1,1);
+		glActiveTextureARB(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D,depthTextureId);
+		glEnable(GL_TEXTURE_2D);
+		glTranslated(0,0,-1);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0,0);glVertex3f(0,0,0);
+		glTexCoord2d(1,0);glVertex3f(RENDER_WIDTH/2,0,0);
+		glTexCoord2d(1,1);glVertex3f(RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
+		glTexCoord2d(0,1);glVertex3f(0,RENDER_HEIGHT/2,0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);*/
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
@@ -954,7 +989,7 @@ static bool CheckFramebufferStatus();
 					{
 						glColor4f(vrml_colors[color_index[num_polygon]][0],vrml_colors[color_index[num_polygon]][1],vrml_colors[color_index[num_polygon]][2], 1.0f);
 					}
-					else if(vrml_tex_coord_node == 0) //如果没有颜色属性，而且没有问题，则默认为黑色
+					else if(vrml_tex_coord_node == 0) //如果没有颜色属性，而且没有问题，则默认为白色
 					{
 						glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 						//glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
@@ -1177,7 +1212,7 @@ static bool CheckFramebufferStatus();
 		mbInitialised = true;
 
 		Reset();
-		std::cout<<"2"<<std::endl;
+		std::cout<<"VrmlGame Init"<<std::endl;
 	}
 
 	void VrmlGame::Reset()

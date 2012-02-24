@@ -92,42 +92,43 @@ System::System()
   GUI.RegisterCommand("LoadGame", GUICommandCallBack, mpARDriver);
   GUI.RegisterCommand("Mouse.Click", GUICommandCallBack, mpARDriver);
 
-//  //create the menus
-//  GUI.ParseLine("GLWindow.AddMenu Menu Menu");
-//  GUI.ParseLine("Menu.ShowMenu Root");
-//  GUI.ParseLine("Menu.AddMenuButton Root \"Reset All\" ResetAll Root");
-//  GUI.ParseLine("Menu.AddMenuButton Root Reset Reset Root");
-//  GUI.ParseLine("Menu.AddMenuButton Root Spacebar PokeTracker Root");
-//  GUI.ParseLine("Menu.AddMenuButton Root Demos \"\" Demos");
-//  GUI.ParseLine("DrawAR=0");
-//  GUI.ParseLine("DrawMap=0");
-//  GUI.ParseLine("Menu.AddMenuToggle Root \"Draw AR\" DrawAR Root");
-//
-//  //Games. This function can be found in Games.cc. Add your games to it.
-//  InitializeGameMenu();
-//  
-//  GUI.ParseLine("GLWindow.AddMenu MapsMenu Maps");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Root \"New Map\" NewMap Root");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Root \"Serialize\" \"\" Serial");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Save Maps\" SaveMaps Root");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Save Map\" SaveMap Root");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Load Map\" LoadMap Root");
-//#ifdef _LINUX
-//  GUI.ParseLine("MapsMenu.AddMenuToggle Serial \"Save Video\" SaveFIFO Serial");
-//  GUI.ParseLine("MapsMenu.AddMenuSlider Serial Bitrate Bitrate 100 20000 Serial");
-//#endif
-//  GUI.ParseLine("LockMap=0");
-//  GUI.ParseLine("MapsMenu.AddMenuToggle Root \"Lock Map\" LockMap Root");
-//  GUI.ParseLine("MapsMenu.AddMenuButton Root \"Delete Map\" DeleteMap Root");
-//  GUI.ParseLine("MapInfo=0");
-//  GUI.ParseLine("MapsMenu.AddMenuToggle Root \"Map Info\" MapInfo Root");
-//
-//  GUI.ParseLine("GLWindow.AddMenu MapViewerMenu Viewer");
-//  GUI.ParseLine("MapViewerMenu.AddMenuToggle Root \"View Map\" DrawMap Root");
-//  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Next NextMap Root");
-//  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Previous PrevMap Root");
-//  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Current CurrentMap Root");
-//
+//GUI界面上面的按钮 做demo的时候需要注释起来的
+  //create the menus
+  GUI.ParseLine("GLWindow.AddMenu Menu Menu");
+  GUI.ParseLine("Menu.ShowMenu Root");
+  GUI.ParseLine("Menu.AddMenuButton Root \"Reset All\" ResetAll Root");
+  GUI.ParseLine("Menu.AddMenuButton Root Reset Reset Root");
+  GUI.ParseLine("Menu.AddMenuButton Root Spacebar PokeTracker Root");
+  GUI.ParseLine("Menu.AddMenuButton Root Demos \"\" Demos");
+  GUI.ParseLine("DrawAR=0");
+  GUI.ParseLine("DrawMap=0");
+  GUI.ParseLine("Menu.AddMenuToggle Root \"Draw AR\" DrawAR Root");
+
+  //Games. This function can be found in Games.cc. Add your games to it.
+  InitializeGameMenu();
+  
+  GUI.ParseLine("GLWindow.AddMenu MapsMenu Maps");
+  GUI.ParseLine("MapsMenu.AddMenuButton Root \"New Map\" NewMap Root");
+  GUI.ParseLine("MapsMenu.AddMenuButton Root \"Serialize\" \"\" Serial");
+  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Save Maps\" SaveMaps Root");
+  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Save Map\" SaveMap Root");
+  GUI.ParseLine("MapsMenu.AddMenuButton Serial \"Load Map\" LoadMap Root");
+#ifdef _LINUX
+  GUI.ParseLine("MapsMenu.AddMenuToggle Serial \"Save Video\" SaveFIFO Serial");
+  GUI.ParseLine("MapsMenu.AddMenuSlider Serial Bitrate Bitrate 100 20000 Serial");
+#endif
+  GUI.ParseLine("LockMap=0");
+  GUI.ParseLine("MapsMenu.AddMenuToggle Root \"Lock Map\" LockMap Root");
+  GUI.ParseLine("MapsMenu.AddMenuButton Root \"Delete Map\" DeleteMap Root");
+  GUI.ParseLine("MapInfo=0");
+  GUI.ParseLine("MapsMenu.AddMenuToggle Root \"Map Info\" MapInfo Root");
+
+  GUI.ParseLine("GLWindow.AddMenu MapViewerMenu Viewer");
+  GUI.ParseLine("MapViewerMenu.AddMenuToggle Root \"View Map\" DrawMap Root");
+  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Next NextMap Root");
+  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Previous PrevMap Root");
+  GUI.ParseLine("MapViewerMenu.AddMenuButton Root Current CurrentMap Root");
+//GUI界面上面的按钮 做demo的时候需要注释起来的
 
   mbDone = false;
 }
@@ -195,9 +196,9 @@ void System::Run()
       static gvar3<int> gvnDrawAR("DrawAR", 0, HIDDEN|SILENT);
       
       bool bDrawMap = mpMap->IsGood() && *gvnDrawMap;
-      //bool bDrawAR = mpMap->IsGood() && *gvnDrawAR;
+      bool bDrawAR = mpMap->IsGood() && *gvnDrawAR;
 	  //为了不显示光流和之后建立的地图，特征点，所以直接设成true
-      bool bDrawAR = true;
+      //bool bDrawAR = true;
       mpTracker->TrackFrame(mimFrameBW, !bDrawAR && !bDrawMap);
       
       if(bDrawMap) {

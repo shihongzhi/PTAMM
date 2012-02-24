@@ -73,7 +73,7 @@ private:
 	void SetTexture(GLuint texId);
 	void DrawQuad();
 	void InitGaussTexture(GLuint texId);
-	enum {FBO_RND = 0, FBO_ABS=1, FBO_BLD=2 };
+	enum {FBO_RND = 0, FBO_ABS=1, FBO_BLD=2 };  //FBO_RND保存导入的model和阴影，FBO_BLD保存FBO_RND与视频图像的融合
 
 	enum {TEX_DEPTH=0, TEX_XTOON, TEX_GAUSS1, TEX_GAUSS2, TEX_BUFF1, TEX_BUFF2, TEX_BUFF3,
 		TEX_LINE3D1, TEX_LINE3D2, TEX_TRAN1, TEX_TRAN2, TEX_TRANX,

@@ -27,6 +27,9 @@
 
 #include "utility/floattype.h"
 #include "GLShader.h"
+#include <string.h>
+#include <iostream>
+#include <fstream>
 
 #ifdef _DEBUG
 #pragma comment( lib, "marker100-win32-vc8-mtd-d.lib" )
@@ -59,6 +62,7 @@ namespace PTAMM {
 		void DrawIndexedFaceSet(openvrml::vrml97_node::indexed_face_set_node* vrml_ifs) const;
 		void detect_corners(std::string &markerdata, std::vector<std::vector<Wml::Vector2d> > &corners);
 		void InitMedMaskTexture();
+		//float readShadowvariable(std::string &filepath);
 	private:
 		openvrml::browser b;
 		Map * mpMap;                    // The associated map

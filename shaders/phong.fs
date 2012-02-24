@@ -5,6 +5,7 @@ uniform sampler2DShadow ShadowMap;
 uniform float xPixelOffset ;
 // This define the value to move one pixel up or down
 uniform float yPixelOffset ;
+uniform float shadowVariable;
 
 
 varying vec3 normal;
@@ -19,6 +20,7 @@ float lookup( vec2 offSet)
 }
 
 void main(void) {
+	//phong shader
     vec4 finalColor = (gl_LightSource[0].ambient*gl_FrontMaterial.ambient);
   
     vec3 N = normalize(normal);
@@ -34,10 +36,11 @@ void main(void) {
 		float specular = pow(max(dot(R, E),0.0),32.0);//gl_FrontMaterial.shininess);
 		finalColor += gl_LightSource[0].specular*gl_FrontMaterial.specular*specular;
     }
+	//end of phong shader
   
 	float shadow ;
 	
-	// Avoid counter shadow
+	// Avoid counter shadow  8*8=64Kernel
 	if (ShadowCoord.w > 1.0)
 	{
 		float x,y;
@@ -47,7 +50,7 @@ void main(void) {
 		
 		shadow /= 64.0 ;
 	}
-  	gl_FragColor =	  (shadow+0.4) * finalColor;
+  	gl_FragColor = (shadow+shadowVariable) * finalColor;
   //gl_FragData[0] = shadow*finalColor;
   //gl_FragColor = shadow*gl_Color;
   //gl_FragData[0] = vec4(distanceFromLight);  //深度图没发看，因为没有归一化
