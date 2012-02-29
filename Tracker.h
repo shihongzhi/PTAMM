@@ -48,7 +48,7 @@ public:
   Tracker(CVD::ImageRef irVideoSize, const ATANCamera &c, std::vector<Map*> &maps, Map *m, MapMaker &mm);
   
   // TrackFrame is the main working part of the tracker: call this every frame.
-  void TrackFrame(CVD::Image<CVD::byte> &imFrame, bool bDraw); 
+  void TrackFrame(CVD::Image<CVD::byte> &imFrame, CVD::Image<CVD::Rgb<CVD::byte> > &imRGB, bool bDraw); 
 
   inline SE3<> GetCurrentPose() { return mse3CamFromWorld; }
   inline bool IsLost() { return (mnLostFrames > NUM_LOST_FRAMES); }

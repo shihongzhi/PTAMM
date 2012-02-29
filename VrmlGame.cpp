@@ -34,8 +34,9 @@ static bool CheckFramebufferStatus();
 
 		std::vector<std::string> parameter;
 		std::vector<std::string> uri;
-		//uri.push_back("./20.wrl");  //u型水管
-		uri.push_back("../vrmlmodels/30.wrl");
+		//u型水管
+		//uri.push_back("../vrmlmodels/30.wrl");
+		uri.push_back("../vrmlmodels/36.wrl");  //立方体和球
 		b.load_url(uri, parameter);
 		//texture = new GLuint;
 		glGenTextures(20, texture);
@@ -44,7 +45,7 @@ static bool CheckFramebufferStatus();
 
 		phongShadow.SetShaderFile("shaders/phong.vs","shaders/phong.fs");
 		phongShadow.UseShader(false);
-		GeneratrShadowFBO();
+		GeneratrShadowFBO();  //产生
 		InitMedMaskTexture();
 		std::cout<<"VrmlGame generate method......"<<std::endl;
 	}
@@ -76,90 +77,111 @@ static bool CheckFramebufferStatus();
 		std::cout << "load MEDMASK.bmp" << std::endl;
 	}
 
-	void VrmlGame::DrawMediatorAndObject()
+	void VrmlGame::DrawMediatorAndObject(int statusFlag)
 	{
-		
-		//mediator
-		glColor4f(1.0f, 1.0f, 1.0f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
-
-		//glutSolidCube(1);
-
-		//glColor4f(0.7f, 0.7f, 0.7f, 0.0f);
-		glEnable(GL_TEXTURE_2D);
-		//为什么加了这句话就没有阴影了  --2.23
-		//glBindTexture(GL_TEXTURE_2D, medMashTextureId);
-		//back face
-		glBegin(GL_POLYGON);
-		glVertex3f(1.0f, 0.0f, 1.0f);
-		glVertex3f(0.4f, 0.0f, 1.0f);
-		glVertex3f(0.4f, 0.0f, -1.0f);
-		glVertex3f(1.0f, 0.0f, -1.0f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glVertex3f(0.4f, 0.0f, 1.0f);
-		glVertex3f(-0.4f, 0.0f, 1.0f);
-		glVertex3f(-0.4f, 0.0f, 0.4f);
-		glVertex3f(0.4f, 0.0f, 0.4f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glVertex3f(-0.4f, 0.0f, 1.0f);
-		glVertex3f(-1.0f, 0.0f, 1.0f);
-		glVertex3f(-1.0f, 0.0f, -1.0f);
-		glVertex3f(-0.4f, 0.0f, -1.0f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glVertex3f(0.4f, 0.0f, -0.4f);
-		glVertex3f(-0.4f, 0.0f, -0.4f);
-		glVertex3f(-0.4f, 0.0f, -1.0f);
-		glVertex3f(0.4f, 0.0f, -1.0f);
-		glEnd();
-
-		////front face
-		//glBegin(GL_POLYGON);
-		//glVertex3f(1.0f, 0.0f, 1.0f);
-		//glVertex3f(1.0f, 0.0f, -1.0f);
-		//glVertex3f(0.3f, 0.0f, -1.0f);
-		//glVertex3f(0.3f, 0.0f, 1.0f);
-		//glEnd();
-
-		//glBegin(GL_POLYGON);
-		//glVertex3f(0.3f, 0.0f, 1.0f);
-		//glVertex3f(0.3f, 0.0f, 0.3f);
-		//glVertex3f(-0.3f, 0.0f, 0.3f);
-		//glVertex3f(-0.3f, 0.0f, 1.0f);
-		//glEnd();
-
-		//glBegin(GL_POLYGON);
-		//glVertex3f(-0.3f, 0.0f, 1.0f);
-		//glVertex3f(-0.3f, 0.0f, -1.0f);
-		//glVertex3f(-1.0f, 0.0f, -1.0f);
-		//glVertex3f(-1.0f, 0.0f, 1.0f);
-		//glEnd();
-
-		//glBegin(GL_POLYGON);
-		//glVertex3f(0.3f, 0.0f, -0.3f);
-		//glVertex3f(0.3f, 0.0f, -1.0f);
-		//glVertex3f(-0.3f, 0.0f, -1.0f);
-		//glVertex3f(-0.3f, 0.0f, -0.3f);
-		//glEnd();
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		glDisable(GL_TEXTURE_2D);
-		//Virtual object
-		std::vector<openvrml::node_ptr> mfn;
-		mfn = b.root_nodes();
-		if (mfn.size() == 0)
+		if (statusFlag == 1 || statusFlag == 2)
 		{
-			return;
+			//mediator
+			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
+			glBegin(GL_POLYGON);
+			glVertex3f(1.2f, 0.0f, 1.2f);
+			glVertex3f(1.2f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, 1.2f);
+			glEnd();
 		}
-		else
+		if (statusFlag == 3 || statusFlag == 4)
 		{
-			for (unsigned int i=0; i<mfn.size(); i++)
+			glColor4f(0.5f, 0.5f, 0.5f, 0.0f);
+			glBegin(GL_POLYGON);
+			glVertex3f(0.6f, 0.0f, 0.6f);
+			glVertex3f(0.6f, 0.0f, -0.6f);
+			glVertex3f(-0.6f, 0.0f, -0.6f);
+			glVertex3f(-0.6f, 0.0f, 0.6f);
+			glEnd();
+
+			//mediator
+			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
+			glEnable(GL_TEXTURE_2D);
+			//为什么加了这句话就没有阴影了  --2.23
+			//glBindTexture(GL_TEXTURE_2D, medMashTextureId);
+
+			//back face
+			/*glBegin(GL_POLYGON);
+			glVertex3f(1.2f, 0.0f, 1.2f);
+			glVertex3f(0.5f, 0.0f, 1.2f);
+			glVertex3f(0.5f, 0.0f, -1.2f);
+			glVertex3f(1.2f, 0.0f, -1.2f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(0.5f, 0.0f, 1.2f);
+			glVertex3f(-0.5f, 0.0f, 1.2f);
+			glVertex3f(-0.5f, 0.0f, 0.5f);
+			glVertex3f(0.5f, 0.0f, 0.5f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(-0.5f, 0.0f, 1.2f);
+			glVertex3f(-1.2f, 0.0f, 1.2f);
+			glVertex3f(-1.2f, 0.0f, -1.2f);
+			glVertex3f(-0.5f, 0.0f, -1.2f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(0.5f, 0.0f, -0.5f);
+			glVertex3f(-0.5f, 0.0f, -0.5f);
+			glVertex3f(-0.5f, 0.0f, -1.2f);
+			glVertex3f(0.5f, 0.0f, -1.2f);
+			glEnd();*/
+
+			////front face
+			glBegin(GL_POLYGON);
+			glVertex3f(1.2f, 0.0f, 1.2f);
+			glVertex3f(1.2f, 0.0f, -1.2f);
+			glVertex3f(0.6f, 0.0f, -1.2f);
+			glVertex3f(0.6f, 0.0f, 1.2f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(0.6f, 0.0f, 1.2f);
+			glVertex3f(0.6f, 0.0f, 0.6f);
+			glVertex3f(-0.6f, 0.0f, 0.6f);
+			glVertex3f(-0.6f, 0.0f, 1.2f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(-0.6f, 0.0f, 1.2f);
+			glVertex3f(-0.6f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, 1.2f);
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glVertex3f(0.6f, 0.0f, -0.6f);
+			glVertex3f(0.6f, 0.0f, -1.2f);
+			glVertex3f(-0.6f, 0.0f, -1.2f);
+			glVertex3f(-0.6f, 0.0f, -0.6f);
+			glEnd();
+			//glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+		}
+		if (statusFlag == 0 || statusFlag == 2 || statusFlag == 4)
+		{
+			//Virtual object
+			std::vector<openvrml::node_ptr> mfn;
+			mfn = b.root_nodes();
+			if (mfn.size() == 0)
 			{
-				openvrml::node* vrml_node = mfn[i].get();
-				Draw3DFromVRML(vrml_node);
+				return;
+			}
+			else
+			{
+				for (unsigned int i=0; i<mfn.size(); i++)
+				{
+					openvrml::node* vrml_node = mfn[i].get();
+					Draw3DFromVRML(vrml_node);
+				}
 			}
 		}
 	}
@@ -407,21 +429,7 @@ static bool CheckFramebufferStatus();
 		glMatrixMode(GL_MODELVIEW);
 	}
 
-
-	//float VrmlGame::readShadowvariable(std::string &filepath)
-	//{
-	//	std::ifstream variableFile;
-	//	double shadowVariable;
-	//	variableFile.open(filepath.c_str());
-	//	if (!variableFile)
-	//	{
-	//		cout << "can't open the variable file" <<endl;
-	//	}
-	//	variableFile>>shadowVariable;
-	//	return shadowVariable;
-	//}
-
-	void VrmlGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera)
+	void VrmlGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag)
 	{
 		if(!mbInitialised) {
 			Init();
@@ -434,12 +442,14 @@ static bool CheckFramebufferStatus();
 		std::string filename = "variable.txt";
 		std::ifstream variableFile;
 		float shadowvariable;
+		int light_count;
 		variableFile.open(filename.c_str());
 		if (!variableFile)
 		{
 			cout << "can't open the variable file" <<endl;
 		}
 		variableFile>>shadowvariable;
+		variableFile>>light_count;
 
  		//shadow
  		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboShadowId);
@@ -461,12 +471,12 @@ static bool CheckFramebufferStatus();
  		glEnable(GL_COLOR_MATERIAL);
  		glMatrixMode(GL_MODELVIEW);
  		glLoadIdentity();
- 		gluLookAt(3.0, 4.0, 0.0, -50.0, -100.0, 0.0, 0.0, 1.0, 0.0);
+ 		gluLookAt(0.0, 4.0, 0.0, -10.0, -100.0, 0.0, 0.0, 1.0, 0.0);
  		//消除自我阴影
 		glEnable(GL_CULL_FACE);  //之前没有加这句话，所以Front没有被剔除
  		glCullFace(GL_FRONT);
- 		DrawMediatorAndObject();  //需要设置texture7
- 		SetTextureMatrix();
+ 		DrawMediatorAndObject(statusFlag);  //需要设置texture7
+ 		SetTextureMatrix();  //设置texture7
 		
 
 		//add 12.8  draw virtual object
@@ -508,7 +518,7 @@ static bool CheckFramebufferStatus();
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, depthTextureId);
 		glDisable(GL_CULL_FACE);
-		DrawMediatorAndObject();
+		DrawMediatorAndObject(statusFlag);
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);

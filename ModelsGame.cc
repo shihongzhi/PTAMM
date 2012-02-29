@@ -102,7 +102,7 @@ void ModelsGame::Init()
  * @param map the current map
  * @param se3CfromW The current camera position
  */
-void ModelsGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera)
+void ModelsGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag)
 {
   if( !mbInitialised ) {
     Init();

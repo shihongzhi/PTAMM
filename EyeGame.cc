@@ -24,7 +24,7 @@ EyeGame::EyeGame()
  * @param map the current map
  * @param se3CfromW the location of the camera
  */
-void EyeGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera)
+void EyeGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag)
 {
   Vector<3> v3CameraPos = se3CfromW.inverse().get_translation();
   

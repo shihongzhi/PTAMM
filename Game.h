@@ -31,7 +31,7 @@ class Game
   public:
     Game( std::string sName ) : msName(sName), mbInitialised(false) {}
     virtual ~Game() {};
-    virtual void Draw3D(const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera) = 0;  /// draw the game for a map
+    virtual void Draw3D(const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag) = 0;  /// draw the game for a map
 	virtual void Draw2D(const GLWindow2 &glWindow, Map &map) {}                      /// draw any 2D overlays needed.
     virtual void Reset() = 0;                                                        /// reset
     virtual void Init() = 0;                                                         /// initialize

@@ -34,7 +34,7 @@ class ARDriver
 {
   public:
     ARDriver(const ATANCamera &cam, ImageRef irFrameSize, GLWindow2 &glw, Map &map);
-	void Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CamFromWorld, bool bLost);
+	void Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CamFromWorld, bool bLost, int statusFlag);
     void Reset();
     void Init();
 

@@ -114,9 +114,11 @@ void Tracker::Reset()
 // It figures out what state the tracker is in, and calls appropriate internal tracking
 // functions. bDraw tells the tracker wether it should output any GL graphics
 // or not (it should not draw, for example, when AR stuff is being shown.)
-void Tracker::TrackFrame(Image<CVD::byte> &imFrame, bool bDraw)
+void Tracker::TrackFrame(Image<CVD::byte> &imFrame, CVD::Image<CVD::Rgb<CVD::byte> > &imRGB, bool bDraw)
 {
+	
   mbDraw = bDraw;
+
   mMessageForUser.str("");   // Wipe the user message clean
   
   // Take the input video image, and convert it into the tracker's keyframe struct
@@ -145,7 +147,8 @@ void Tracker::TrackFrame(Image<CVD::byte> &imFrame, bool bDraw)
   
   if(mbDraw)
     {
-      glDrawPixels(mCurrentKF.aLevels[0].im);
+      //glDrawPixels(mCurrentKF.aLevels[0].im);
+		glDrawPixels(imRGB);  //替换为RGB图片现实 --2012.2.29
       if(GV2.GetInt("Tracker.DrawFASTCorners",0, SILENT))
 	{
 	  glColor3f(1,0,1);  glPointSize(1); glBegin(GL_POINTS);
@@ -201,8 +204,9 @@ void Tracker::TrackFrame(Image<CVD::byte> &imFrame, bool bDraw)
 	      AssessTrackingQuality();
 	    }
 	}
-      if(mbDraw)
-	RenderGrid();
+	  //画平面网格的 --2012.2.29
+      /*if(mbDraw)
+		RenderGrid();*/
     } 
   else // If there is no map, try to make one.
     TrackForInitialMap(); 
@@ -480,13 +484,14 @@ int Tracker::TrailTracking_Advance()
 	}
       if(mbDraw)
 	{
-	  if(!bFound)
-	    glColor3f(0,1,1); // Failed trails flash purple before dying.
-	  else
-	    glColor3f(1,1,0);
-	  glVertex(trail.irInitialPos);
-	  if(bFound) glColor3f(1,0,0);
-	  glVertex(trail.irCurrentPos);
+		//光流现实的代码  --2012.2.29
+	  //if(!bFound)
+	  //  glColor3f(0,1,1); // Failed trails flash purple before dying.
+	  //else
+	  //  glColor3f(1,1,0);
+	  //glVertex(trail.irInitialPos);
+	  //if(bFound) glColor3f(1,0,0);
+	  //glVertex(trail.irCurrentPos);
 	}
       if(!bFound) // Erase from list of trails if not found this frame.
 	{
@@ -746,26 +751,27 @@ void Tracker::TrackMap()
       mse3CamFromWorld = SE3<>::exp(v6Update) * mse3CamFromWorld;
       v6LastUpdate = v6Update;
     };
-  
-  if(mbDraw)
-    {
-      glPointSize(6);
-      glEnable(GL_BLEND);
-      glEnable(GL_POINT_SMOOTH);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glBegin(GL_POINTS);
-      for(vector<TrackerData*>::reverse_iterator it = vIterationSet.rbegin();
-	  it!= vIterationSet.rend(); 
-	  it++)
-	{
-	  if(! (*it)->bFound)
-	    continue;
-	  glColor(gavLevelColors[(*it)->nSearchLevel]);
-	  glVertex((*it)->v2Image);
-	}
-      glEnd();
-      glDisable(GL_BLEND);
-    }
+  //这里现实的是特征点 --2012.2.29
+ // if(mbDraw)
+ //   {
+ //     glPointSize(6);
+ //     glEnable(GL_BLEND);
+ //     glEnable(GL_POINT_SMOOTH);
+ //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ //     glBegin(GL_POINTS);
+ //     for(vector<TrackerData*>::reverse_iterator it = vIterationSet.rbegin();
+	//  it!= vIterationSet.rend(); 
+	//  it++)
+	//{
+	//  if(! (*it)->bFound)
+	//    continue;
+	//  glColor(gavLevelColors[(*it)->nSearchLevel]);
+	//  glVertex((*it)->v2Image);
+	//}
+ //     glEnd();
+ //     glDisable(GL_BLEND);
+ //   }
+
   
   // Update the current keyframe with info on what was found in the frame.
   // Strictly speaking this is unnecessary to do every frame, it'll only be

@@ -94,7 +94,7 @@ void ARDriver::Reset()
  * @param se3CfromW The camera position
  * @param bLost Is the camera lost
  */
-void ARDriver::Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CfromW, bool bLost)
+void ARDriver::Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CfromW, bool bLost, int statusFlag)
 {
   if(!mbInitialised)
   {
@@ -139,7 +139,7 @@ void ARDriver::Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CfromW, bool bLo
   if(!bLost)
   {
     if(mpMap->pGame) {
-	  mpMap->pGame->Draw3D( mGLWindow, *mpMap, se3CfromW, mfbo[FBO_RND], buffers1, mCamera);
+	  mpMap->pGame->Draw3D( mGLWindow, *mpMap, se3CfromW, mfbo[FBO_RND], buffers1, mCamera, statusFlag);
     }
   }
 

@@ -64,7 +64,8 @@ class System
     MapSerializer *mpMapSerializer;                 // The map serializer for saving and loading maps
     
     bool mbDone;                                    // Kill?
-    
+    int statusFlag;
+
     GVars3::gvar3<int> mgvnLockMap;                 // Stop a map being edited - i.e. keyframes added, points updated
     GVars3::gvar3<int> mgvnDrawMapInfo;             // Draw map info on the screen
     

@@ -22,7 +22,7 @@ class EyeGame : public Game
 {
   public:
     EyeGame( );
-    void Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera);
+    void Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag);
     void Reset();
     void Init();
 

@@ -90,9 +90,8 @@ System::System()
   GUI.RegisterCommand("CurrentMap", GUICommandCallBack, mpMapViewer);
   
   GUI.RegisterCommand("LoadGame", GUICommandCallBack, mpARDriver);
-  GUI.RegisterCommand("Mouse.Click", GUICommandCallBack, mpARDriver);
+  //GUI.RegisterCommand("Mouse.Click", GUICommandCallBack, mpARDriver);
 
-//GUI界面上面的按钮 做demo的时候需要注释起来的
   //create the menus
   GUI.ParseLine("GLWindow.AddMenu Menu Menu");
   GUI.ParseLine("Menu.ShowMenu Root");
@@ -128,9 +127,9 @@ System::System()
   GUI.ParseLine("MapViewerMenu.AddMenuButton Root Next NextMap Root");
   GUI.ParseLine("MapViewerMenu.AddMenuButton Root Previous PrevMap Root");
   GUI.ParseLine("MapViewerMenu.AddMenuButton Root Current CurrentMap Root");
-//GUI界面上面的按钮 做demo的时候需要注释起来的
 
   mbDone = false;
+  statusFlag = 0;
 }
 
 
@@ -197,18 +196,17 @@ void System::Run()
       
       bool bDrawMap = mpMap->IsGood() && *gvnDrawMap;
       bool bDrawAR = mpMap->IsGood() && *gvnDrawAR;
-	  //为了不显示光流和之后建立的地图，特征点，所以直接设成true
-      //bool bDrawAR = true;
-      mpTracker->TrackFrame(mimFrameBW, !bDrawAR && !bDrawMap);
+
+      mpTracker->TrackFrame(mimFrameBW, mimFrameRGB, !bDrawAR && !bDrawMap);
       
       if(bDrawMap) {
-	mpMapViewer->DrawMap(mpTracker->GetCurrentPose());
+		mpMapViewer->DrawMap(mpTracker->GetCurrentPose());
       }
       else if(bDrawAR) {
         if( !mpTracker->IsLost() ) {
           mpARDriver->AdvanceLogic();
         }
-	mpARDriver->Render(mimFrameRGB, mpTracker->GetCurrentPose(), mpTracker->IsLost() );
+		mpARDriver->Render(mimFrameRGB, mpTracker->GetCurrentPose(), mpTracker->IsLost(), statusFlag);
       }
 
       if(*mgvnDrawMapInfo) {
@@ -223,7 +221,8 @@ void System::Run()
 	sCaption = mpTracker->GetMessageForUser();
       }
       mGLWindow.DrawCaption(sCaption);
-      mGLWindow.DrawMenus();
+	  //这里draw menus --2012.2.29
+      //mGLWindow.DrawMenus();
 
 #ifdef _LINUX      
       if( *mgvnSaveFIFO )
@@ -293,20 +292,21 @@ void System::GUICommandCallBack(void *ptr, string sCommand, string sParams)
   {
     static_cast<ARDriver*>(ptr)->LoadGame(sParams);
   }
-  else if( sCommand == "Mouse.Click" ) {
-    vector<string> vs = ChopAndUnquoteString(sParams);
-    
-    if( vs.size() != 3 ) {
-      return;
-    }
+ //到时需要把这段注释起来，静止鼠标点击导致的程序崩溃  --2012.2.29  貌似不对，还要找一下原因，还是会崩溃的
+ // else if( sCommand == "Mouse.Click" ) {
+ //   vector<string> vs = ChopAndUnquoteString(sParams);
+ //   
+ //   if( vs.size() != 3 ) {
+ //     return;
+ //   }
 
-    istringstream is(sParams);
-    int nButton;
-    ImageRef irWin;
-    is >> nButton >> irWin.x >> irWin.y;
-    static_cast<ARDriver*>(ptr)->HandleClick( nButton, irWin );
-    
-  }
+ //   istringstream is(sParams);
+ //   int nButton;
+ //   ImageRef irWin;
+ //   is >> nButton >> irWin.x >> irWin.y;
+ //   static_cast<ARDriver*>(ptr)->HandleClick( nButton, irWin );
+	//std::cout<<"nButton:"<<nButton<<" irWin.x:"<<irWin.x<<" irWin.y:"<<irWin.y<<std::endl;
+ // }
   else if( sCommand == "KeyPress" )
   {
     if(sParams == "q" || sParams == "Escape")
@@ -314,12 +314,58 @@ void System::GUICommandCallBack(void *ptr, string sCommand, string sParams)
       GUI.ParseLine("quit");
       return;
     }
-
+    // --2012.2.29
 	//导入vrml game
 	if (sParams == "v")
 	{
 		GUI.ParseLine("LoadGame Vrml");
 	}
+	//切换vrml Game
+	if (sParams == "a")
+	{
+		static gvar3<int> gvnDrawAR("DrawAR", 0, HIDDEN|SILENT);
+		*gvnDrawAR = 1;
+		//GUI.ParseLine("DrawAR=1"); //用这种的话 没法变回来
+	}
+	//切换到原图
+	if (sParams == "b")
+	{
+		static gvar3<int> gvnDrawAR("DrawAR", 0, HIDDEN|SILENT);
+		*gvnDrawAR = 0;
+	}
+	
+
+	//只导入模型
+	if (sParams == "0")
+	{
+		static_cast<System*>(ptr)->statusFlag = 0;
+		std::cout<< "statusFlag :"<<static_cast<System*>(ptr)->statusFlag<<std::endl;
+	}
+	//只导入中介面
+	if (sParams == "1")
+	{
+		static_cast<System*>(ptr)->statusFlag = 1;
+		std::cout<< "statusFlag :"<<static_cast<System*>(ptr)->statusFlag<<std::endl;
+	}
+	//同时导入中介面和模型
+	if (sParams == "2")
+	{
+		static_cast<System*>(ptr)->statusFlag = 2;
+		std::cout<< "statusFlag :"<<static_cast<System*>(ptr)->statusFlag<<std::endl;
+	}
+	//只有中介面 但是去掉中间标记
+	if (sParams == "3")
+	{
+		static_cast<System*>(ptr)->statusFlag = 3;
+		std::cout<< "statusFlag :"<<static_cast<System*>(ptr)->statusFlag<<std::endl;
+	}
+	//中介面及模型，且中间标记去掉
+	if (sParams == "4")
+	{
+		static_cast<System*>(ptr)->statusFlag = 4;
+		std::cout<< "statusFlag :"<<static_cast<System*>(ptr)->statusFlag<<std::endl;
+	}
+	//--2012.2.29
 
 	////开启Render
 	//if (sParams == "o")

@@ -50,7 +50,8 @@ void main(void) {
 		
 		shadow /= 64.0 ;
 	}
-  	gl_FragColor = (shadow+shadowVariable) * finalColor;
+  	gl_FragColor = (shadow+0.2) * finalColor;
+	//gl_FragColor = finalColor;
   //gl_FragData[0] = shadow*finalColor;
   //gl_FragColor = shadow*gl_Color;
   //gl_FragData[0] = vec4(distanceFromLight);  //深度图没发看，因为没有归一化

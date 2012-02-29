@@ -49,8 +49,8 @@ namespace PTAMM {
 	{
 	public:
    		VrmlGame( );
-		void Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera);
-		void DrawMediatorAndObject();
+		void Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag);
+		void DrawMediatorAndObject(int statusFlag);
 		void GetMatrixMP(Map &map);
 		void GeneratrShadowFBO();
 		void SetTextureMatrix();
@@ -62,7 +62,6 @@ namespace PTAMM {
 		void DrawIndexedFaceSet(openvrml::vrml97_node::indexed_face_set_node* vrml_ifs) const;
 		void detect_corners(std::string &markerdata, std::vector<std::vector<Wml::Vector2d> > &corners);
 		void InitMedMaskTexture();
-		//float readShadowvariable(std::string &filepath);
 	private:
 		openvrml::browser b;
 		Map * mpMap;                    // The associated map

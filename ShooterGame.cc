@@ -144,7 +144,7 @@ void ShooterGame::Init()
  * @param map The current map
  * @param se3CfromW The current camera position
  */
-void ShooterGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera)
+void ShooterGame::Draw3D( const GLWindow2 &glWindow, Map &map, SE3<> se3CfromW, GLuint fboId, GLenum *buffers, ATANCamera &mCamera, int statusFlag)
 {
   if( !mbInitialised ) {
     Init();
