@@ -36,8 +36,8 @@ static bool CheckFramebufferStatus();
 		std::vector<std::string> uri;
 		//u型水管
 		//uri.push_back("../vrmlmodels/30.wrl");
-		//uri.push_back("../vrmlmodels/36.wrl");  //立方体和圆柱
-		uri.push_back("../vrmlmodels/39.wrl");  //书本和笔
+		uri.push_back("../vrmlmodels/36.wrl");  //立方体和圆柱
+		//uri.push_back("../vrmlmodels/39.wrl");  //书本和笔
 		b.load_url(uri, parameter);
 		//texture = new GLuint;
 		glGenTextures(20, texture);
