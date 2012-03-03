@@ -41,6 +41,7 @@ void main(void) {
 	}
 
 
+
 	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 		
 	// Used to lower moir¨¦ pattern and self-shadowing

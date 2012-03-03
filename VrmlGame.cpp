@@ -44,7 +44,7 @@ static bool CheckFramebufferStatus();
 		//glBindTexture(GL_TEXTURE_2D, texture);
 		
 
-		phongShadow.SetShaderFile("shaders/phong.vs","shaders/phong.fs");
+		phongShadow.SetShaderFile("shaders/phongPCF.vs","shaders/phongPCF.fs");
 		phongShadow.UseShader(false);
 		GeneratrShadowFBO();  //²úÉú
 		InitMedMaskTexture();
@@ -374,10 +374,10 @@ static bool CheckFramebufferStatus();
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-		//// This is to allow usage of shadow2DProj function in the shader
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		//glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
+		// This is to allow usage of shadow2DProj function in the shader
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
 
 
 		// No need to force GL_DEPTH_COMPONENT24, drivers usually give you the max precision if available 
@@ -527,17 +527,22 @@ static bool CheckFramebufferStatus();
 		
 		phongShadow.UseShader(true);
 		glEnable(GL_TEXTURE_2D);
-		if (statusFlag != 2)
+		if (statusFlag != 2 && statusFlag != 0)
 		{
+			phongShadow.SetUniVar("xPixelOffset", 1.0f/ (640.0f* 2));
+			phongShadow.SetUniVar("yPixelOffset", 1.0f/ (480.0f* 2));
 			phongShadow.SetSampler("ShadowMap",7);
+			glActiveTexture(GL_TEXTURE7);
+			glBindTexture(GL_TEXTURE_2D, depthTextureId);
 		}
-		glActiveTexture(GL_TEXTURE7);
-		glBindTexture(GL_TEXTURE_2D, depthTextureId);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		DrawMediatorAndObject(statusFlag);
-		glActiveTexture(GL_TEXTURE7);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (statusFlag != 2 && statusFlag != 0)
+		{
+			glActiveTexture(GL_TEXTURE7);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
 		phongShadow.UseShader(false);
