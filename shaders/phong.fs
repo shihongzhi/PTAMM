@@ -31,21 +31,19 @@ void main(void) {
 	{
 		finalColor = vec4(161.0/256.0, 155.0/256.0, 139.0/256.0, 0.0);
 	}
-	else if(gl_Color.a==0.0 && gl_Color.r > 0.62)  //无边缘提取的
+	else if(gl_Color.a==0.0 && gl_Color.r > 0.67)  //无边缘提取的
 	{
 		finalColor = vec4(161.0/256.0, 155.0/256.0, 139.0/256.0, 1.0);
 	}
-	else
+	else //其余为物体和阴影，但是边缘提取的阴影不知道为什么没有了
 	{
 		finalColor = vec4(finalColor.rgb, 1.0);
 	}
 
-
-
 	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 		
-	// Used to lower moiré pattern and self-shadowing
-	shadowCoordinateWdivide.z += 0.0005;
+	// Used to lower moiré pattern and self-shadowing  这个阈值变小之后可以把书本旁边的齿轮变小，但是没法消掉，不知道怎么消
+	shadowCoordinateWdivide.z += 0.0000001;
 	
 	float distanceFromLight = texture2D(ShadowMap,shadowCoordinateWdivide.st).z;
 	

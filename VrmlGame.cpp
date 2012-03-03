@@ -15,7 +15,7 @@
 
 namespace PTAMM{
 
-#define SHADOW_WAP_RATIO 2
+#define SHADOW_WAP_RATIO 4
 #define RENDER_WIDTH 640.0
 #define RENDER_HEIGHT 480.0
 
@@ -36,15 +36,15 @@ static bool CheckFramebufferStatus();
 		std::vector<std::string> uri;
 		//u型水管
 		//uri.push_back("../vrmlmodels/30.wrl");
-		uri.push_back("../vrmlmodels/36.wrl");  //立方体和圆柱
-		//uri.push_back("../vrmlmodels/39.wrl");  //书本和笔
+		//uri.push_back("../vrmlmodels/36.wrl");  //立方体和圆柱
+		uri.push_back("../vrmlmodels/39.wrl");  //书本和笔
 		b.load_url(uri, parameter);
 		//texture = new GLuint;
 		glGenTextures(20, texture);
 		//glBindTexture(GL_TEXTURE_2D, texture);
 		
 
-		phongShadow.SetShaderFile("shaders/phongPCF.vs","shaders/phongPCF.fs");
+		phongShadow.SetShaderFile("shaders/phong.vs","shaders/phong.fs");
 		phongShadow.UseShader(false);
 		GeneratrShadowFBO();  //产生
 		InitMedMaskTexture();
@@ -375,10 +375,10 @@ static bool CheckFramebufferStatus();
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-		// This is to allow usage of shadow2DProj function in the shader
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
+		//// This is to allow usage of shadow2DProj function in the shader
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		//glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
 
 
 		// No need to force GL_DEPTH_COMPONENT24, drivers usually give you the max precision if available 
@@ -464,7 +464,7 @@ static bool CheckFramebufferStatus();
 		variableFile>>shadowvariable;
 		variableFile>>light_count;
 
-		if (statusFlag != 2 && statusFlag != 0)
+		if (statusFlag != 2 )
 		{
 			//shadow
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboShadowId);
@@ -528,22 +528,22 @@ static bool CheckFramebufferStatus();
 		
 		phongShadow.UseShader(true);
 		glEnable(GL_TEXTURE_2D);
-		if (statusFlag != 2 && statusFlag != 0)
-		{
-			phongShadow.SetUniVar("xPixelOffset", 1.0f/ (640.0f* 2));
-			phongShadow.SetUniVar("yPixelOffset", 1.0f/ (480.0f* 2));
+		//if (statusFlag != 2 )
+		//{
+			//phongShadow.SetUniVar("xPixelOffset", 1.0f/ (640.0f* 2));
+			//phongShadow.SetUniVar("yPixelOffset", 1.0f/ (480.0f* 2));
 			phongShadow.SetSampler("ShadowMap",7);
 			glActiveTexture(GL_TEXTURE7);
 			glBindTexture(GL_TEXTURE_2D, depthTextureId);
-		}
+		//}
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		DrawMediatorAndObject(statusFlag);
-		if (statusFlag != 2 && statusFlag != 0)
-		{
+		//if (statusFlag != 2 )
+		//{
 			glActiveTexture(GL_TEXTURE7);
 			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		//}
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
 		phongShadow.UseShader(false);

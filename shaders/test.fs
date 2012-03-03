@@ -25,18 +25,17 @@ void main(void)
 	}
 	else
 	{
-		//if(object.a==0.0)
-		//{
-		//	if(vec3(backEdge.rgb) == vec3(1.0))
-		//		gl_FragColor = vec4(161.0/256.0, 155.0/256.0, 139.0/256.0, 1.0);  //这里的颜色设置成为旁边桌面的颜色
-		//	else
-		//		gl_FragColor = backEdge;
-		//}
-		//else
-		//{
-		//	gl_FragColor = object;
-		//}
-		gl_FragColor = object;
+		if(object.a==0.0)
+		{
+			if(vec3(backEdge.rgb) == vec3(1.0))
+				gl_FragColor = object;
+			else
+				gl_FragColor = backEdge;
+		}
+		else
+		{
+			gl_FragColor = object;
+		}
+		//gl_FragColor = object;
 	}
-	//gl_FragColor = object;
 }
