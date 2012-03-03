@@ -1,11 +1,6 @@
 #extension GL_ARB_texture_rectangle : enable
-//uniform sampler2DRect ShadowMap;
-uniform sampler2DShadow ShadowMap;
-// This define the value to move one pixel left or right
-uniform float xPixelOffset ;
-// This define the value to move one pixel up or down
-uniform float yPixelOffset ;
-uniform float shadowVariable;
+uniform sampler2D ShadowMap;
+//uniform float shadowVariable;
 
 
 varying vec3 normal;
@@ -13,11 +8,6 @@ varying vec3 lightDir;
 varying vec3 eyeVec;
 varying vec4 ShadowCoord;
 
-float lookup( vec2 offSet)
-{
-	// Values are multiplied by ShadowCoord.w because shadow2DProj does a W division for us.
-	return shadow2DProj(ShadowMap, ShadowCoord + vec4(offSet.x * xPixelOffset * ShadowCoord.w, offSet.y * yPixelOffset * ShadowCoord.w, 0.05, 0.0) ).w;
-}
 
 void main(void) {
 	//phong shader
@@ -37,23 +27,30 @@ void main(void) {
 		finalColor += gl_LightSource[0].specular*gl_FrontMaterial.specular*specular;
     }
 	//end of phong shader
-  
-	float shadow ;
-	
-	// Avoid counter shadow  8*8=64Kernel
-	if (ShadowCoord.w > 1.0)
+	if(gl_Color.a==0.0 && gl_Color.r > 0.82)  //有边缘提取的
 	{
-		float x,y;
-		for (y = -3.5 ; y <=3.5 ; y+=1.0)
-			for (x = -3.5 ; x <=3.5 ; x+=1.0)
-				shadow += lookup(vec2(x,y));
-		
-		shadow /= 64.0 ;
+		finalColor = vec4(161.0/256.0, 155.0/256.0, 139.0/256.0, 0.0);
 	}
-  	gl_FragColor = (shadow+0.2) * finalColor;
-	//gl_FragColor = finalColor;
-  //gl_FragData[0] = shadow*finalColor;
-  //gl_FragColor = shadow*gl_Color;
-  //gl_FragData[0] = vec4(distanceFromLight);  //深度图没发看，因为没有归一化
-  //gl_FragData[1] = vec4(0.0,0.0,0.0,1.0);
+	else if(gl_Color.a==0.0 && gl_Color.r > 0.62)  //无边缘提取的
+	{
+		finalColor = vec4(161.0/256.0, 155.0/256.0, 139.0/256.0, 1.0);
+	}
+	else
+	{
+		finalColor = vec4(finalColor.rgb, 1.0);
+	}
+
+
+	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
+		
+	// Used to lower moiré pattern and self-shadowing
+	shadowCoordinateWdivide.z += 0.0005;
+	
+	float distanceFromLight = texture2D(ShadowMap,shadowCoordinateWdivide.st).z;
+	
+ 	float shadow = 1.0;
+ 	if (ShadowCoord.w > 0.0)
+ 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.5 : 1.0 ;
+  	
+	gl_FragColor =	 shadow * finalColor;
 }

@@ -36,7 +36,8 @@ static bool CheckFramebufferStatus();
 		std::vector<std::string> uri;
 		//u型水管
 		//uri.push_back("../vrmlmodels/30.wrl");
-		uri.push_back("../vrmlmodels/36.wrl");  //立方体和球
+		//uri.push_back("../vrmlmodels/36.wrl");  //立方体和圆柱
+		uri.push_back("../vrmlmodels/39.wrl");  //书本和笔
 		b.load_url(uri, parameter);
 		//texture = new GLuint;
 		glGenTextures(20, texture);
@@ -79,7 +80,7 @@ static bool CheckFramebufferStatus();
 
 	void VrmlGame::DrawMediatorAndObject(int statusFlag)
 	{
-		if (statusFlag == 1 || statusFlag == 2)
+		if (statusFlag == 3)
 		{
 			//mediator
 			glColor4f(1.0f, 1.0f, 1.0f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
@@ -90,9 +91,20 @@ static bool CheckFramebufferStatus();
 			glVertex3f(-1.2f, 0.0f, 1.2f);
 			glEnd();
 		}
-		if (statusFlag == 3 || statusFlag == 4)
+		if (statusFlag == 1 || statusFlag == 2)
 		{
-			glColor4f(0.5f, 0.5f, 0.5f, 0.0f);
+			//mediator
+			glColor4f(0.8f, 0.8f, 0.8f, 0.0f);   //这里的alpha值在之后test.fs中用于判断是否为中介面  ---2.23
+			glBegin(GL_POLYGON);
+			glVertex3f(1.2f, 0.0f, 1.2f);
+			glVertex3f(1.2f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, -1.2f);
+			glVertex3f(-1.2f, 0.0f, 1.2f);
+			glEnd();
+		}
+		if (statusFlag == 4)
+		{
+			glColor4f(0.8f, 0.8f, 0.8f, 0.0f);
 			glBegin(GL_POLYGON);
 			glVertex3f(0.6f, 0.0f, 0.6f);
 			glVertex3f(0.6f, 0.0f, -0.6f);
@@ -166,7 +178,7 @@ static bool CheckFramebufferStatus();
 			//glBindTexture(GL_TEXTURE_2D, 0);
 			glDisable(GL_TEXTURE_2D);
 		}
-		if (statusFlag == 0 || statusFlag == 2 || statusFlag == 4)
+		if (statusFlag == 0 || statusFlag == 2 || statusFlag == 3 ||statusFlag == 4)
 		{
 			//Virtual object
 			std::vector<openvrml::node_ptr> mfn;
@@ -362,10 +374,10 @@ static bool CheckFramebufferStatus();
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-		// This is to allow usage of shadow2DProj function in the shader
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
+		//// This is to allow usage of shadow2DProj function in the shader
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		//glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY); 
 
 
 		// No need to force GL_DEPTH_COMPONENT24, drivers usually give you the max precision if available 
@@ -451,32 +463,36 @@ static bool CheckFramebufferStatus();
 		variableFile>>shadowvariable;
 		variableFile>>light_count;
 
- 		//shadow
- 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboShadowId);
- 		CheckFramebufferStatus();
- 		glUseProgramObjectARB(0);
- 		glViewport(0,0,RENDER_WIDTH*SHADOW_WAP_RATIO,RENDER_HEIGHT*SHADOW_WAP_RATIO);
-		glClear(GL_DEPTH_BUFFER_BIT);
- 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
- 		//setup matrices
- 		glEnable(GL_DEPTH_TEST);
- 		glMatrixMode(GL_PROJECTION);
- 		glLoadIdentity();
- 		gluPerspective(45,RENDER_WIDTH/RENDER_HEIGHT,3,40000);
- 
- 		glDisable(GL_BLEND);
- 		glEnable(GL_DEPTH_TEST);
- 		glDepthFunc(GL_LEQUAL);
- 		glEnable(GL_NORMALIZE);
- 		glEnable(GL_COLOR_MATERIAL);
- 		glMatrixMode(GL_MODELVIEW);
- 		glLoadIdentity();
- 		gluLookAt(0.0, 4.0, 0.0, -10.0, -100.0, 0.0, 0.0, 1.0, 0.0);
- 		//消除自我阴影
-		glEnable(GL_CULL_FACE);  //之前没有加这句话，所以Front没有被剔除
- 		glCullFace(GL_FRONT);
- 		DrawMediatorAndObject(statusFlag);  //需要设置texture7
- 		SetTextureMatrix();  //设置texture7
+		if (statusFlag != 2 && statusFlag != 0)
+		{
+			//shadow
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboShadowId);
+			CheckFramebufferStatus();
+			glUseProgramObjectARB(0);
+			glViewport(0,0,RENDER_WIDTH*SHADOW_WAP_RATIO,RENDER_HEIGHT*SHADOW_WAP_RATIO);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+			//setup matrices
+			glEnable(GL_DEPTH_TEST);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluPerspective(45,RENDER_WIDTH/RENDER_HEIGHT,3,40000);
+
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+			glEnable(GL_NORMALIZE);
+			glEnable(GL_COLOR_MATERIAL);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			gluLookAt(0.0, 10.0, 0.0, -10.0, -100.0, 0.0, 0.0, 1.0, 0.0);
+			//消除自我阴影
+			glEnable(GL_CULL_FACE);  //之前没有加这句话，所以Front没有被剔除
+			glCullFace(GL_FRONT);
+			DrawMediatorAndObject(statusFlag);  //需要设置texture7
+			SetTextureMatrix();  //设置texture7
+		}
+ 		
 		
 
 		//add 12.8  draw virtual object
@@ -511,17 +527,19 @@ static bool CheckFramebufferStatus();
 		
 		phongShadow.UseShader(true);
 		glEnable(GL_TEXTURE_2D);
-		phongShadow.SetUniVar("xPixelOffset", 1.0f/ (640.0f* 2));
-		phongShadow.SetUniVar("yPixelOffset", 1.0f/ (480.0f* 2));
-		phongShadow.SetUniVar("shadowVariable", shadowvariable);
-		phongShadow.SetSampler("ShadowMap",7);
+		if (statusFlag != 2)
+		{
+			phongShadow.SetSampler("ShadowMap",7);
+		}
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, depthTextureId);
-		glDisable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 		DrawMediatorAndObject(statusFlag);
 		glActiveTexture(GL_TEXTURE7);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_CULL_FACE);
 		phongShadow.UseShader(false);
 
 		////test shadow mapping
@@ -1002,7 +1020,7 @@ static bool CheckFramebufferStatus();
 					else if(vrml_tex_coord_node == 0) //如果没有颜色属性，而且没有问题，则默认为白色
 					{
 						glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-						//glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+						//glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
 					}
 					//set normal if polygon
 					if (vrml_normal_node !=0 && !is_vrml_normal_per_vertex)

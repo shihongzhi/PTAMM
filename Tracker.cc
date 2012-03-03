@@ -485,13 +485,13 @@ int Tracker::TrailTracking_Advance()
       if(mbDraw)
 	{
 		//光流现实的代码  --2012.2.29
-	  //if(!bFound)
-	  //  glColor3f(0,1,1); // Failed trails flash purple before dying.
-	  //else
-	  //  glColor3f(1,1,0);
-	  //glVertex(trail.irInitialPos);
-	  //if(bFound) glColor3f(1,0,0);
-	  //glVertex(trail.irCurrentPos);
+	  if(!bFound)
+	    glColor3f(0,1,1); // Failed trails flash purple before dying.
+	  else
+	    glColor3f(1,1,0);
+	  glVertex(trail.irInitialPos);
+	  if(bFound) glColor3f(1,0,0);
+	  glVertex(trail.irCurrentPos);
 	}
       if(!bFound) // Erase from list of trails if not found this frame.
 	{

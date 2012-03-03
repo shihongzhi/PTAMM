@@ -131,7 +131,7 @@ void ARDriver::Render(Image<Rgb<CVD::byte> > &imFrame, SE3<> se3CfromW, bool bLo
   af[0]=0.5; af[1]=0.5; af[2]=0.5; af[3]=1.0;
   glLightfv(GL_LIGHT0, GL_AMBIENT, af);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, af);
-  af[0]=0.0; af[1]=0.0; af[2]=10.0; af[3]=1.0;
+  af[0]=0.0; af[1]=10.0; af[2]=0.0; af[3]=1.0;
   glLightfv(GL_LIGHT0, GL_POSITION, af);
 
   //FBO_RND shader
